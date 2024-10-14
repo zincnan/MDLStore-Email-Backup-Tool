@@ -1,0 +1,11 @@
+build/
+dist/
+test/
+venv/
+
+app.spec
+/test.py
+
+MDLStore/configs/
+MDLStore/tempdata
+
