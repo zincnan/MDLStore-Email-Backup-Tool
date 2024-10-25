@@ -2,13 +2,21 @@ import codecs
 import email
 import imaplib
 import os
+import sys
 from abc import ABC, abstractmethod
 from email.header import decode_header
 from email.utils import parsedate_to_datetime
 
 from MDLStore.utils import EmailUtils
 
-module_path = os.path.dirname(os.path.abspath(__file__))
+# module_path = os.path.dirname(os.path.abspath(__file__))
+
+# 如果是打包后的exe，获取exe的所在目录
+if getattr(sys, 'frozen', False):
+    module_path = os.path.dirname(sys.executable)
+else:
+    # 如果是脚本运行，则获取脚本的所在目录
+    module_path = os.path.dirname(os.path.abspath(__file__))
 
 temp_dir = os.path.join(module_path, 'tempdata')
 

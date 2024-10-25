@@ -4,6 +4,7 @@ import json
 import os
 import pickle
 import shutil
+import sys
 import tempfile
 import time
 import traceback
@@ -20,7 +21,15 @@ from MDLStore.mailclients import IMAPClientFactory
 from MDLStore.storage import FileWriter, StorageManager, PathDirUtil
 from MDLStore.utils import ServerUtils, EmailUtils, EmailParser, CommonUtils
 
-module_path = os.path.dirname(os.path.abspath(__file__))
+# module_path = os.path.dirname(os.path.abspath(__file__))
+
+# 如果是打包后的exe，获取exe的所在目录
+if getattr(sys, 'frozen', False):
+    module_path = os.path.dirname(sys.executable)
+else:
+    # 如果是脚本运行，则获取脚本的所在目录
+    module_path = os.path.dirname(os.path.abspath(__file__))
+
 
 temp_dir = os.path.join(module_path, 'tempdata')
 

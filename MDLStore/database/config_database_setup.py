@@ -7,16 +7,15 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 # 创建declarative base 基类实例
 Base = declarative_base()
 
-module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# module_path = os.path.dirname(os.path.abspath(__file__))
+# 确定module位置
+if getattr(sys, 'frozen', False):
+    module_path = os.path.dirname(sys.executable)
+else:
+    # 如果是脚本运行，则获取脚本的所在目录
+    module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# 获取程序当前运行的目录
-# if getattr(sys, 'frozen', False):
-#     # 如果是打包后的可执行文件，则使用sys._MEIPASS获取真实的目录路径
-#     module_path = os.path.dirname(sys.executable)
-# else:
-#     # 如果是普通的脚本运行，使用__file__获取路径
-#     module_path = os.path.dirname(os.path.abspath(__file__))
+# module_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 print(f'config_database:20;module_path={module_path}')
 
 config_path = os.path.join(module_path, 'configs')
