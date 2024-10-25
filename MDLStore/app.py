@@ -1,6 +1,7 @@
 import configparser
 import os
 import pickle
+import sys
 import traceback
 
 from PyQt5.QtCore import Qt, QRect, QThreadPool, QSize
@@ -17,7 +18,15 @@ from MDLStore.database.service import EmailAccountManager
 from MDLStore.ui_utils import APP_Signals
 
 homepath = os.path.expanduser("~")
-module_path = os.path.dirname(os.path.abspath(__file__))
+# module_path = os.path.dirname(os.path.abspath(__file__))
+# 确定module_path
+if getattr(sys, 'frozen', False):
+    module_path = os.path.dirname(sys.executable)
+else:
+    # 如果是脚本运行，则获取脚本的所在目录
+    module_path = os.path.dirname(os.path.abspath(__file__))
+
+
 stylepath = os.path.join(module_path, 'styles')
 iconpath = os.path.join(module_path, 'icons')
 config_path = os.path.join(module_path, 'configs')

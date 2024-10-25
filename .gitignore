@@ -4,6 +4,7 @@ test/
 venv/
 
 app.spec
+MDLStore.spec
 /test.py
 /icon.png
 
