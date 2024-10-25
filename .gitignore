@@ -5,6 +5,7 @@ venv/
 
 app.spec
 /test.py
+/icon.png
 
 MDLStore/configs/
 MDLStore/tempdata
