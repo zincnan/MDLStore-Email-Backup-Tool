@@ -613,7 +613,7 @@ class EmailParser:
             "163": r'https://mail\.163\.com/large-attachment-download/index\.html\?p=.*',
             "126": r'https://mail\.163\.com/large-attachment-download/index\.html\?p=.*',
             "QQ": r'https://mail\.qq\.com/cgi-bin/ftnExs_download\?k=.*',
-            "Gmail": r'https://drive\.google\.com/file/d/.*',
+            "Gmail": r'https://drive\.google\.com/(file/d/|open\?id=).*',
             "Outlook": r'https://1drv\.ms/.*',
             "189": r'https://download\.cloud\.189\.cn/file/downloadFile\.action\?dt=.*',
             "RUC": r'https://edisk\.qiye\.163\.com/api/biz/attachment/download\?identity=.*',
@@ -624,6 +624,7 @@ class EmailParser:
         print(f'匹配云附件类型')
         for provider, pattern in patterns.items():
             if re.search(pattern, body_):
+                print(f'当前匹配的provider是{provider}')
                 parser_ = CloudFileParser.create_parser(provider)
                 file_infos = parser_.get_cloud_file_info(body_)
                 for file_info in file_infos:

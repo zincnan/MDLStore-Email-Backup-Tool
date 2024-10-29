@@ -225,44 +225,42 @@ class GmailCloudFileParser(CloudFileParser):
     def __init__(self):
         super().__init__("Gmail")
 
+    from bs4 import BeautifulSoup
+
     def get_cloud_file_info(self, html):
         """
         解析Gmail云附件的HTML，提取文件名、文件大小、过期时间和下载链接
         :param html: 邮件正文的HTML内容
         :return: 包含文件名、文件大小、过期时间、过期状态和外部链接的字典列表
         """
+        print(f'获取gmail云附件信息')
         soup = BeautifulSoup(html, 'html.parser')
         cloud_file_info_list = []
 
-        # 查找包含云附件信息的div
-        for div in soup.find_all('div', class_='gmail_chip gmail_drive_chip'):
+        # 查找包含云附件信息的 div 元素
+        attachment_divs = soup.find_all('div', class_='gmail_chip gmail_drive_chip')
+        for div in attachment_divs:
             file_info = {}
 
             # 提取文件名
-            file_name_tag = div.find('span', dir='ltr')
-            if file_name_tag:
-                file_info['filename'] = file_name_tag.text.strip()
+            filename_tag = div.find('span', dir='ltr')
+            if filename_tag:
+                file_info['filename'] = filename_tag.get_text(strip=True)
+            else:
+                file_info['filename'] = "Unknown"
 
-            # 提取文件外部链接
+            # 提取外部链接
             link_tag = div.find('a', href=True)
             if link_tag:
                 file_info['outside_link'] = link_tag['href']
+            else:
+                file_info['outside_link'] = "No Link"
+            # 设置其他固定信息
+            file_info['file_size'] = self.get_file_size(file_info['outside_link'])  # 设为固定值 0
+            file_info['expire_time'] = 'No Expiry'
+            file_info['expired'] = True
 
-            # 提取文件类型和图标
-            # img_tag = div.find('img', alt=True)
-            # if img_tag and 'type' in img_tag['src']:
-            #     file_type = img_tag['src'].split('type/')[1]
-            #     file_info['file_type'] = file_type
-
-            # 计算文件大小 (假设可以从链接地址或者其他地方提取)
-            # 注意：Gmail的云附件中通常不会直接包含文件大小，所以此处可能需要进一步处理
-            # 如果确实无法从HTML中提取文件大小，则需要通过其他手段获取，如访问链接后获取信息
-            file_info['file_size'] = self.get_file_size(file_info['outside_link'])
-
-            # 设置过期时间和过期状态，Gmail Drive链接通常没有明确的过期时间
-            file_info['expire_time'] = 'No Expiry'  # 通常没有过期时间
-            file_info['expired'] = False  # 因网络问题不下载
-
+            # 添加至列表
             cloud_file_info_list.append(file_info)
 
         return cloud_file_info_list
@@ -294,7 +292,7 @@ class OutlookCloudFileParser(CloudFileParser):
                     "filename": link_tag.get_text(strip=True).replace('\r', '').replace('\n', ''),
                     "file_size": 0,  # 无法从HTML中直接获取文件大小
                     "expire_time": "NoExpire",  # 无法从HTML中直接获取过期时间
-                    "expired": False,  # 无法从HTML中直接获取是否过期
+                    "expired": True,  # 无法从HTML中直接获取是否过期
                     "outside_link": link_tag['href']
                 }
                 cloud_file_info_list.append(cloud_file_info)
@@ -632,7 +630,7 @@ class CloudAttachmentDownloader:
         "163": r'https://mail\.163\.com/large-attachment-download/index\.html\?p=.*',
         "126": r'https://mail\.163\.com/large-attachment-download/index\.html\?p=.*',
         "QQ": r'https://mail\.qq\.com/cgi-bin/ftnExs_download\?k=.*',
-        "Gmail": r'https://drive\.google\.com/file/d/.*',
+        "Gmail": r'https://drive\.google\.com/(file/d/|open\?id=).*',
         "Outlook": r'https://1drv\.ms/.*',
         "189": r'https://download\.cloud\.189\.cn/file/downloadFile\.action\?dt=.*',
         "RUC": r'https://edisk\.qiye\.163\.com/api/biz/attachment/download\?identity=.*',
@@ -961,6 +959,51 @@ class GmailDownloader:
 
     def get_headers(self):
         return {}
+
+    def get_downloadUrl(self):
+        """
+        解析器中处理所有的重定向
+        :return:
+        """
+        url = self.outside_link
+        downloader = CloudAttachmentDownloader(url)
+        download_url = downloader.handle_redirect(url)
+        url = download_url
+        parsed_url = urllib.parse.urlparse(url)
+        # 提取主机名和请求路径
+        host = parsed_url.netloc
+        path = f"{parsed_url.path}?{parsed_url.query}"
+
+        # 创建HTTPS连接
+        conn = http.client.HTTPSConnection(host)
+        # 发送GET请求
+        conn.request("GET", path)
+
+        html = conn.getresponse().read()
+        download_url = self.extract_download_link(html)
+        print(f'下载链接初始:{download_url}')
+        t = downloader.handle_redirect(download_url)
+        return t
+
+    @staticmethod
+    def extract_download_link(html_content):
+        # 确保输入为字符串
+        if isinstance(html_content, bytes):
+            html_content = html_content.decode('utf-8')
+
+        # 调整模式，支持转义符
+        pattern = r"https://drive\.usercontent\.google\.com/uc\?id\\u003d([-\w]+)\\u0026export\\u003ddownload"
+
+        # 查找所有符合条件的链接
+        matches = re.findall(pattern, html_content)
+
+        # 返回第一个匹配项的格式化链接
+        if matches:
+            file_id = matches[0]
+            return f"https://drive.usercontent.google.com/uc?id={file_id}&export=download"
+
+        return None
+
 
 
 class OutlookDownloader:
