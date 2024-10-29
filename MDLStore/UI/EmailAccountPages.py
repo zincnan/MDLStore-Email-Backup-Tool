@@ -204,16 +204,17 @@ class AccountPage(Ui_AccountPage, QWidget):
             self.lineEdit_password.setEchoMode(QLineEdit.Password)  # 显示密
 
 
-
 class EmailAccountForm(QWidget):
     def __init__(self, parent=None):
         super(EmailAccountForm, self).__init__(parent)
         # 主布局
+        self.email_account_input = None
         main_layout = QHBoxLayout(self)
 
         # 左侧的邮箱服务类型列表
         self.service_list = QListWidget()
-        services = ["网易163邮箱", "网易126邮箱", "QQ邮箱", "搜狐邮箱", "电信189邮箱", "RUC人大邮箱", "Gmail邮箱", "Outlook邮箱", "搜狐邮箱", "其他邮箱"]
+        services = ["网易163邮箱", "网易126邮箱", "QQ邮箱", "搜狐邮箱", "电信189邮箱", "RUC人大邮箱", "Gmail邮箱",
+                    "Outlook邮箱", "搜狐邮箱", "其他邮箱"]
         for service in services:
             item = QListWidgetItem(service)
             self.service_list.addItem(item)
@@ -290,7 +291,7 @@ class EmailAccountForm(QWidget):
             self.imap_server_input.setText("imap.gmail.com")
             self.imap_port_input.setText("993")
         elif service == "Outlook邮箱":
-            self.imap_server_input.setText("outlook.office365.com")
+            self.imap_server_input.setText("Outlook.office365.com")
             self.imap_port_input.setText("993")
         elif service == "其他邮箱":
             # self.imap_server_input.setText("outlook.office365.com")
@@ -362,5 +363,3 @@ class EmailAccountDialog(QDialog):
         layout = QVBoxLayout(self)
         layout.addWidget(self.form)
         self.setLayout(layout)
-
-
