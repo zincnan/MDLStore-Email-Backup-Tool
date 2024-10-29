@@ -1093,7 +1093,7 @@ class OutlookDownloader:
 
         # 打印响应状态和数据
         print(response.status, response.reason)
-        print(data.decode('utf-8'))
+        # print(data.decode('utf-8'))
 
         host = 'my.microsoftpersonalcontent.com'
         path = ('/_api/v2.0/drives/b4d4828101067d8a/items/B4D4828101067D8A!320?'
@@ -1118,12 +1118,20 @@ class OutlookDownloader:
 
         # 打印响应状态和数据
         print(response.status, response.reason)
-        print(data.decode('utf-8'))
+        info_json = data.decode('utf-8')
+        info_dict = json.loads(info_json)
 
         conn.close()
+        return info_dict
 
     def get_headers(self):
         return {}
+
+    def get_downloadUrl(self):
+        token = self.get_token()
+        info = self.driveitem(token)
+        url = info['@content.downloadUrl']
+        return url
 
 
 class Cloud189Downloader:
