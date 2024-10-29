@@ -291,7 +291,7 @@ class EmailAccountForm(QWidget):
             self.imap_server_input.setText("imap.gmail.com")
             self.imap_port_input.setText("993")
         elif service == "Outlook邮箱":
-            self.imap_server_input.setText("Outlook.office365.com")
+            self.imap_server_input.setText("(服务变更:暂不支持)Outlook.office365.com")
             self.imap_port_input.setText("993")
         elif service == "其他邮箱":
             # self.imap_server_input.setText("outlook.office365.com")

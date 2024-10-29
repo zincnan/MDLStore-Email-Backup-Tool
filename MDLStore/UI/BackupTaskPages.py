@@ -518,6 +518,10 @@ class BackupTaskPage(QWidget, Ui_BackupTaskPage):
 class BackupTaskWidget(QWidget, Ui_BackupTaskWidget):
     def __init__(self, parent=None, *args, **kwargs):
         super(BackupTaskWidget, self).__init__(parent, *args, **kwargs)
+        self.new_task_object = None
+        self.root_item = None
+        self.model = None
+        self.folders = None
         self.setupUi(self)
         self.init_ui()
 
@@ -760,6 +764,7 @@ class BackupTaskWidget(QWidget, Ui_BackupTaskWidget):
             folders = mail_boxs
             # print(folders)
         else:
+            print(f'登录失败，无法获取文件夹状态')
             folders = ['收件箱', '已发送', '收件箱/子文件夹1', '收件箱/子文件夹2', 'test', 'test/test1']
 
         # 清空当前的树结构（只保留根节点）

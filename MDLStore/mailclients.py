@@ -64,7 +64,7 @@ class IMAPClientBase(ABC):
         """获取并打印邮箱列表。"""
         mailboxes = []
         status, mailbox_list = self.client.list()
-        # print(f"Source Mailbox list:{mailbox_list}")
+        print(f"Source Mailbox list:{mailbox_list}")
         for mailbox in mailbox_list:
             parts = mailbox.decode().split(' "/" ')
             if len(parts) > 1:
@@ -350,6 +350,7 @@ class SohuClient(IMAPClientBase):
 class IMAPClientFactory:
     @staticmethod
     def get_client(client_type_, *args, **kwargs):
+        print(f'client_type = {client_type_}')
         if client_type_ == 'gmail':
             return GmailClient(*args, **kwargs)
         elif client_type_ == 'netease':
