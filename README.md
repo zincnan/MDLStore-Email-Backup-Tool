@@ -7,4 +7,5 @@
 
 ### Python版本
 Python 3.8
-详情见：https://github.com/zincnan/MDLStore-Email-Backup-Tool/wiki/%E5%9F%BA%E4%BA%8EPyqt%E7%9A%84%E9%82%AE%E4%BB%B6%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7%EF%BC%88Mail-Data-Lite-Store%EF%BC%89
+### 详情见：
+https://github.com/zincnan/MDLStore-Email-Backup-Tool/wiki/%E5%9F%BA%E4%BA%8EPyqt%E7%9A%84%E9%82%AE%E4%BB%B6%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD%E5%B7%A5%E5%85%B7%EF%BC%88Mail-Data-Lite-Store%EF%BC%89
